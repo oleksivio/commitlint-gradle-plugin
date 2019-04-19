@@ -1,0 +1,46 @@
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "build.gradle.kts" }}
+      - run: gradle assemble
+      - run: gradle test
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-{{ checksum "build.gradle.kts" }}
+  upload:
+    docker:
+      - image: circleci/openjdk:11.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "build.gradle.kts" }}
+      - run: gradle final publishPlugins -Prelease.useLastTag=true -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-{{ checksum "build.gradle.kts" }}
+      - store_artifacts:
+          path: build/libs
+          destination: libs
+
+
+workflows:
+  version: 2
+  build_and_upload:
+    jobs:
+      - build
+      - upload:
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+            branches:
+              ignore: /.*/
