@@ -22,7 +22,7 @@ repositories {
 gradlePlugin {
     plugins {
         create("commitlintPlugin") {
-            id = GROUP
+            id = "$GROUP.$PROJECT_NAME"
             implementationClass = "$GROUP.$PROJECT_NAME.CommitlintPlugin"
         }
     }
