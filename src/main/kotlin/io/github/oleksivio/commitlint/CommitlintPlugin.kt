@@ -5,33 +5,27 @@ import io.github.oleksivio.commitlint.checker.CommitlintLastBranchCommit
 import io.github.oleksivio.commitlint.checker.CommitlintUniqueBranchCommit
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
 
 
 class CommitlintPlugin : Plugin<Project> {
-
+    
     override fun apply(project: Project) {
-
-        val extension = project.extensions.create("commitlint", CommitlintPluginExtension::class.java)
 
         val gradleBuildFolder = project.buildscript.sourceFile?.parentFile
                 ?: throw IllegalStateException("Can't get gradle build folder")
 
-        project.task("commitlintLastCommit") { task ->
-            task.doLast {
-                CommitlintLastBranchCommit().checkCommit(gradleBuildFolder, extension.type)
-            }
+        project.tasks.create("commitlintLastCommit", CommitlintLastBranchCommit::class.java).apply {
+            checkingFolder = gradleBuildFolder
         }
 
-        project.task("commitlintUniqueBranchCommit") { task ->
-            task.doLast {
-                CommitlintUniqueBranchCommit().checkCommit(gradleBuildFolder, extension.type)
-            }
+        project.tasks.create("commitlintUniqueBranchCommit", CommitlintUniqueBranchCommit::class.java).apply {
+            checkingFolder = gradleBuildFolder
         }
 
-        project.task("commitlintAll") { task ->
-            task.doLast {
-                CommitlintAllCommit().checkCommit(gradleBuildFolder, extension.type)
-            }
+        project.tasks.create("commitlintAll", CommitlintAllCommit::class.java).apply {
+            checkingFolder = gradleBuildFolder
         }
+
     }
 }

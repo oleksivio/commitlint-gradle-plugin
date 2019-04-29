@@ -5,7 +5,7 @@ import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.revwalk.RevWalk
 import org.eclipse.jgit.revwalk.filter.RevFilter
 
-class CommitlintAllCommit : CommitChecker() {
+open class CommitlintAllCommit : CommitChecker() {
     override fun Repository.loadCommit(): Iterable<RevCommit> = RevWalk(this).use { walk ->
         walk.revFilter = RevFilter.NO_MERGES
         walk.toList()

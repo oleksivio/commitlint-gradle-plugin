@@ -5,7 +5,7 @@ import org.eclipse.jgit.lib.AnyObjectId
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
 
-class CommitlintUniqueBranchCommit : CommitChecker() {
+open class CommitlintUniqueBranchCommit : CommitChecker() {
     override fun Repository.loadCommit(): Iterable<RevCommit> {
         val currentBranchRef = resolve(fullBranch)
 

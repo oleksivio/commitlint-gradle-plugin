@@ -1,19 +1,26 @@
 package io.github.oleksivio.commitlint.checker
 
-import io.github.oleksivio.commitlint.CommitlintPlugin
 import io.github.oleksivio.commitlint.exceptions.InvalidCommitMessageFormatException
 import io.github.oleksivio.commitlint.exceptions.InvalidCommitMessageValueException
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevWalk
-import org.eclipse.jgit.revwalk.filter.RevFilter
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-abstract class CommitChecker {
+abstract class CommitChecker : DefaultTask() {
 
-    fun checkCommit(checkingFolder: File, checkerType: CommitCheckerType) {
+    @Input
+    var checkType: CommitCheckerType = CommitCheckerType.DEFAULT
+
+    lateinit var checkingFolder: File
+
+    @TaskAction
+    fun checkCommit() {
+
 
         val repository = FileRepositoryBuilder()
                 .findGitDir(checkingFolder)
@@ -25,7 +32,7 @@ abstract class CommitChecker {
                 }
                 .build() ?: throw IllegalStateException("")
 
-        repository.loadCommit().asSequence().map { it.parse() }.forEach { it.check(checkerType) }
+        repository.loadCommit().asSequence().map { it.parse() }.forEach { it.check(checkType) }
     }
 
     protected fun Repository.git(): Git = Git.wrap(this)
