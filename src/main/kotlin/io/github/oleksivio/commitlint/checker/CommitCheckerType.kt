@@ -25,6 +25,23 @@ enum class CommitCheckerType {
                     "feat",
                     "BREAKING CHANGE"
             )
+    },
+    MIXED {
+        override val typeList: List<String>
+        get() = listOf(
+                "build",
+                "ci",
+                "chore",
+                "docs",
+                "perf",
+                "refactor",
+                "revert",
+                "style",
+                "test",
+                "fix",
+                "feat",
+                "BREAKING CHANGE"
+        )
     };
 
     abstract val typeList: List<String>
