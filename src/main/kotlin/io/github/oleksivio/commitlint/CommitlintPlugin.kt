@@ -15,7 +15,7 @@ class CommitlintPlugin : Plugin<Project> {
         val gradleBuildFolder = project.buildscript.sourceFile?.parentFile
                 ?: throw IllegalStateException("Can't get gradle build folder")
 
-        val scopeProperty: String? = System.getenv("scope")
+        val scopeProperty: String? = project.findProperty("scope")?.toString()
 
 
         project.tasks.create("commitlint", Commitlint::class.java).apply {
