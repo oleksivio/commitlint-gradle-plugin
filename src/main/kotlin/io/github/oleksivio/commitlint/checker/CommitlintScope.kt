@@ -35,13 +35,19 @@ class CommitlintScopeBranch : CommitlintScope() {
         println(currentBranchRef.name)
 
         val otherBranchesRef = repository.git().branchList().call()
+                .asSequence()
                 .map { it.name }
                 .map {
                     println(it)
                     it
                 }
                 .map { repository.resolve(it) }
+                .map {
+                    println(it.name)
+                    it
+                }
                 .filter { it.name != currentBranchRef.name }
+                .toList()
 
         println("Exclude:")
         otherBranchesRef.forEach { println(it.name) }
