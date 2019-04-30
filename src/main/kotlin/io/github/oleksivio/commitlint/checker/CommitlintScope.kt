@@ -28,13 +28,23 @@ class CommitlintScopeOne : CommitlintScope() {
 class CommitlintScopeBranch : CommitlintScope() {
     override fun loadCommit(repository: Repository): Iterable<RevCommit> {
 
+        println(repository.fullBranch)
+
         val currentBranchRef = repository.resolve(repository.fullBranch)
+
+        println(currentBranchRef.name)
 
         val otherBranchesRef = repository.git().branchList().call()
                 .map { it.name }
+                .map {
+                    println(it)
+                    it
+                }
                 .filter { it != repository.fullBranch }
                 .map { repository.resolve(it) }
 
+        println("Exclude:")
+        otherBranchesRef.forEach { println(it.name) }
 
 
         return repository.git().log()
