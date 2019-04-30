@@ -41,12 +41,12 @@ class CommitlintScopeBranch : CommitlintScope() {
                     println(it)
                     it
                 }
+                .filter { it != repository.fullBranch }
                 .map { repository.resolve(it) }
                 .map {
                     println(it.name)
                     it
                 }
-                .filter { it.name != currentBranchRef.name }
                 .toList()
 
         println("Exclude:")
