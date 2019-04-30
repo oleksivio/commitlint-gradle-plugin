@@ -10,7 +10,8 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 open class Commitlint : DefaultTask() {
-
+    //TODO add additional logging flag
+    
     @Input
     var checkType: CommitCheckerType = CommitCheckerType.DEFAULT
 
@@ -33,12 +34,7 @@ open class Commitlint : DefaultTask() {
                 }
                 .build() ?: throw IllegalStateException("")
 
-
-
-        scope.loadCommit(repository).asSequence().map {
-            print(it.id)
-            it
-        }.map { it.parse() }.forEach { it.check(checkType) }
+        scope.loadCommit(repository).asSequence().map { it.parse() }.forEach { it.check(checkType) }
     }
 
 
