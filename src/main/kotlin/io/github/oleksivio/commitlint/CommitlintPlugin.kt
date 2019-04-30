@@ -1,11 +1,11 @@
 package io.github.oleksivio.commitlint
 
-import io.github.oleksivio.commitlint.checker.CommitlintAllCommit
-import io.github.oleksivio.commitlint.checker.CommitlintLastBranchCommit
-import io.github.oleksivio.commitlint.checker.CommitlintUniqueBranchCommit
+import io.github.oleksivio.commitlint.checker.Commitlint
+import io.github.oleksivio.commitlint.checker.CommitlintScopeAll
+import io.github.oleksivio.commitlint.checker.CommitlintScopeBranch
+import io.github.oleksivio.commitlint.checker.CommitlintScopeOne
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
 
 
 class CommitlintPlugin : Plugin<Project> {
@@ -15,16 +15,17 @@ class CommitlintPlugin : Plugin<Project> {
         val gradleBuildFolder = project.buildscript.sourceFile?.parentFile
                 ?: throw IllegalStateException("Can't get gradle build folder")
 
-        project.tasks.create("commitlintLastCommit", CommitlintLastBranchCommit::class.java).apply {
-            checkingFolder = gradleBuildFolder
-        }
+        val scopeProperty: String? = project.property("scope")?.toString()
 
-        project.tasks.create("commitlintUniqueBranchCommit", CommitlintUniqueBranchCommit::class.java).apply {
-            checkingFolder = gradleBuildFolder
-        }
 
-        project.tasks.create("commitlintAll", CommitlintAllCommit::class.java).apply {
+        project.tasks.create("commitlint", Commitlint::class.java).apply {
             checkingFolder = gradleBuildFolder
+            scope = when (scopeProperty) {
+                "one" -> CommitlintScopeOne()
+                "branch" -> CommitlintScopeBranch()
+                "all" -> CommitlintScopeAll()
+                else -> CommitlintScopeOne()
+            }
         }
 
     }

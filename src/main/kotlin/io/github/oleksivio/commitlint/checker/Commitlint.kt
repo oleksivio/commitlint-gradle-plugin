@@ -2,8 +2,6 @@ package io.github.oleksivio.commitlint.checker
 
 import io.github.oleksivio.commitlint.exceptions.InvalidCommitMessageFormatException
 import io.github.oleksivio.commitlint.exceptions.InvalidCommitMessageValueException
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.gradle.api.DefaultTask
@@ -11,16 +9,19 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-abstract class CommitChecker : DefaultTask() {
+open class Commitlint : DefaultTask() {
 
     @Input
     var checkType: CommitCheckerType = CommitCheckerType.DEFAULT
 
-    lateinit var checkingFolder: File
+    @Input
+    var checkingFolder: File = File(".")
+
+    @Input
+    var scope: CommitlintScope = CommitlintScopeOne()
 
     @TaskAction
     fun checkCommit() {
-
 
         val repository = FileRepositoryBuilder()
                 .findGitDir(checkingFolder)
@@ -32,13 +33,11 @@ abstract class CommitChecker : DefaultTask() {
                 }
                 .build() ?: throw IllegalStateException("")
 
-        repository.loadCommit().asSequence().map { it.parse() }.forEach { it.check(checkType) }
+
+
+        scope.loadCommit(repository).asSequence().map { it.parse() }.forEach { it.check(checkType) }
     }
 
-    protected fun Repository.git(): Git = Git.wrap(this)
-    
-
-    abstract fun Repository.loadCommit(): Iterable<RevCommit>
 
     data class ParseResult(val type: String, val scope: String?, val subject: String)
 
@@ -73,6 +72,7 @@ abstract class CommitChecker : DefaultTask() {
 
         return ParseResult(type, scope, subject)
     }
+
 
     private fun ParseResult.check(commitCheckerType: CommitCheckerType) {
         if (commitCheckerType.typeList.none { it == type }) {
