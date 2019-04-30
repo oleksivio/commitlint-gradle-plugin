@@ -76,7 +76,10 @@ open class Commitlint : DefaultTask() {
 
     private fun ParseResult.check(commitCheckerType: CommitCheckerType) {
         if (commitCheckerType.typeList.none { it == type }) {
-            throw InvalidCommitMessageValueException("Unknown commit type")
+            throw InvalidCommitMessageValueException(
+                    "Unknown commit type." +
+                            " Type must be one of ${commitCheckerType.typeList}"
+            )
         }
     }
 }
