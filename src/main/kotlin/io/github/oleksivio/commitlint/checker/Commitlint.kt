@@ -35,7 +35,10 @@ open class Commitlint : DefaultTask() {
 
 
 
-        scope.loadCommit(repository).asSequence().map { it.parse() }.forEach { it.check(checkType) }
+        scope.loadCommit(repository).asSequence().map {
+            print(it.shortMessage)
+            it
+        }.map { it.parse() }.forEach { it.check(checkType) }
     }
 
 
